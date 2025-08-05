@@ -10,17 +10,21 @@ import {Button} from "@/components/ui/button";
 import {useMutation} from "@tanstack/react-query";
 import API from "@/lib/api";
 import {toast} from "sonner";
+import type {AxiosError} from "axios";
+import type {AxiosErrorResponse} from "@/lib/types";
 
 interface RegisterProps {
-  name: string;
-  full_name: string;
   email: string;
+  admin: {
+    full_name: string;
+    email: string;
+    password: string;
+  };
+  name: string;
   phone: string;
   location: string;
   website: string;
   description: string;
-  password: string;
-  confirmPassword: string;
   agreeToTerms: boolean;
 }
 
@@ -61,7 +65,7 @@ const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const mutation = useMutation({
+  const mutation = useMutation<RegisterProps, AxiosError, RegisterProps>({
     mutationFn: async (data) => {
       const res = await API.post("/tenants", data);
       return res.data;
@@ -117,8 +121,7 @@ const Register = () => {
               validationSchema={registerSchema}
               enableReinitialize={true}
               onSubmit={(values, { resetForm }) => {
-                const { full_name, email, password, confirmPassword, ...rest } =
-                  values;
+                const { full_name, email, password, ...rest } = values;
                 const admin = {
                   full_name,
                   email,
@@ -138,9 +141,10 @@ const Register = () => {
                     });
                   },
                   onError: (error) => {
-                    console.log(error);
+                    const axiosError = error as AxiosError<AxiosErrorResponse>;
                     toast.error("NGO registration failed", {
-                      description: error?.response?.data?.detail,
+                      description:
+                        axiosError.response?.data?.detail || axiosError.message,
                     });
                   },
                 });

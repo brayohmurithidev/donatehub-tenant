@@ -1,4 +1,3 @@
-import React from "react";
 import {Tabs, TabsContent, TabsList, TabsTrigger,} from "@/components/ui/tabs.tsx";
 import Overview from "@/layout/tabs/Overview.tsx";
 import Campaigns from "@/layout/tabs/Campaigns.tsx";

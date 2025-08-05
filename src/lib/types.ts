@@ -52,3 +52,7 @@ export interface DonationType {
         image_url: string | null;
     };
 }
+
+export interface AxiosErrorResponse {
+    detail?: string;
+}

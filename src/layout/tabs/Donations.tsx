@@ -7,31 +7,6 @@ import {useGetDonations} from "@/hooks/api/useDonation";
 import {LoadingSpinner} from "@/components/loadingSpinner";
 import type {DonationType} from "@/lib/types";
 
-// Dummy data (you can later fetch this)
-const recentDonations = [
-  {
-    id: "1",
-    donorName: "Jane Doe",
-    amount: 250,
-    campaignId: "a",
-    paymentMethod: "mpesa",
-    createdAt: "2025-07-26",
-  },
-  {
-    id: "2",
-    donorName: "",
-    amount: 500,
-    campaignId: "b",
-    paymentMethod: "card",
-    createdAt: "2025-07-27",
-  },
-];
-
-const campaigns = [
-  { id: "a", title: "School Supplies" },
-  { id: "b", title: "Food Relief" },
-];
-
 function formatDate(date: string) {
   return new Date(date).toLocaleDateString("en-US", {
     month: "short",

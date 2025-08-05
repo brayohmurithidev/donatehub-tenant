@@ -11,6 +11,8 @@ import API from "@/lib/api";
 import {toast} from "sonner";
 import * as Yup from "yup";
 import {Alert, AlertTitle} from "@/components/ui/alert";
+import type {AxiosError} from "axios";
+import type {AxiosErrorResponse} from "@/lib/types";
 
 const testValidationSchema = Yup.object({
   phone: Yup.string()
@@ -36,6 +38,11 @@ interface MpesaConfig {
   passkey: string;
   environment: string;
   is_verified?: boolean;
+}
+
+interface MpesaTestPayload {
+  phone: string;
+  amount: number;
 }
 
 type MpesaIntegrationProps = {
@@ -76,44 +83,47 @@ const MpesaIntegrationSheet = ({ children, mpesa }: MpesaIntegrationProps) => {
     }
   }, [mpesa]);
 
-  const mutation = useMutation({
+  const mutation = useMutation<MpesaConfig, AxiosError, MpesaConfig>({
     mutationFn: async (data) => {
       const res = await API.put("/mpesa/update-payment", data);
       return res.data;
     },
-    onSuccess: async (data) => {
+    onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["mpesa"] });
-      console.log(data.response)
       setEditMode(false);
       toast.success("Payment method updated successfully", {
         description: "You can now use your new payment method to make payments",
       });
     },
     onError: (err) => {
-      console.log("error", err)
+      console.log("error", err);
       toast.error("Error updating payment method", {
         description: err?.message,
       });
     },
   });
 
-  if(mutation?.error) console.log(mutation.error)
+  if (mutation?.error) console.log(mutation.error);
 
-  const testMutation = useMutation({
+  const testMutation = useMutation<
+    MpesaTestPayload,
+    AxiosError,
+    MpesaTestPayload
+  >({
     mutationFn: async (data) => {
-      const res = await API.post("/mpesa/test-integration", data);
-      return res.data;
+      return await API.post("/mpesa/test-integration", data);
+    },
+    onError: (err) => {
+      const axiosError = err as AxiosError<AxiosErrorResponse>;
+      toast.error("Error Testing payment method", {
+        description: axiosError.response?.data?.detail || axiosError.message,
+      });
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["mpesa"] });
       setTestMode(false);
       toast.success("Payment method verified successfully", {
         description: "You can now use your new payment method to make payments",
-      });
-    },
-    onError: (err) => {
-      toast.error("Error Testing payment method", {
-        description: err.response?.data?.detail,
       });
     },
   });

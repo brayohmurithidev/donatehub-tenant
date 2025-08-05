@@ -22,11 +22,24 @@ import {cn} from "@/lib/utils";
 import {Popover, PopoverContent, PopoverTrigger,} from "@/components/ui/popover";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import API from "@/lib/api";
+import type {AxiosError} from "axios";
+import {toast} from "sonner";
+import type {AxiosErrorResponse} from "@/lib/types";
 
 type ViewCampaignSheetProps = {
   children: React.ReactNode;
   campaignId?: string;
 };
+
+interface Campaign {
+  title: string;
+  description: string;
+  goal_amount: string;
+  start_date: string;
+  end_date: string;
+  image_url: string;
+  status: string;
+}
 
 export function ViewCampaignSheet({
   children,
@@ -36,14 +49,12 @@ export function ViewCampaignSheet({
   const [editMode, setEditMode] = useState(false);
   const queryClient = useQueryClient();
 
-  const { mutate, isPending } = useMutation({
+  const { mutate, isPending } = useMutation<Campaign, AxiosError, Campaign>({
     mutationFn: async (data) => {
-      console.log({ data });
       const res = await API.put(`/campaigns/${campaignId}`, data);
       return res.data;
     },
-    onSuccess: async (data) => {
-      console.log("Campaign updated successfully");
+    onSuccess: async () => {
       await queryClient.invalidateQueries({
         queryKey: ["campaigns"],
       });
@@ -51,10 +62,13 @@ export function ViewCampaignSheet({
         queryKey: ["campaign", campaignId],
       });
       setEditMode(false);
+      toast.success("Campaign updated successfully");
     },
     onError: (err) => {
-      console.log("Error updating campaign");
-      console.log(err);
+      const axiosError = err as AxiosError<AxiosErrorResponse>;
+      toast.error("Error updating campaign", {
+        description: axiosError.response?.data?.detail || axiosError.message,
+      });
     },
   });
 
@@ -235,7 +249,7 @@ export function ViewCampaignSheet({
                   onChange={(e) => {
                     const file = e.target.files?.[0];
                     if (file) {
-                      handleChange("image_url", file);
+                      handleChange("image_url", URL.createObjectURL(file));
                     }
                   }}
                 />
@@ -289,7 +303,6 @@ function DatePicker({
   value: string;
   onChange: (val: string) => void;
 }) {
-  const date = value ? new Date(value) : new Date();
   return (
     <Popover>
       <PopoverTrigger asChild>
