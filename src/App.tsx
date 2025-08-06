@@ -8,6 +8,7 @@ import ProtectedRoute from "@/layout/ProtectedRoute";
 import Register from "@/pages/Register";
 
 function App() {
+    console.log("API Base URL:", import.meta.env.VITE_API_URL);
   return (
     <Routes>
       <Route element={<ProtectedRoute />}>
