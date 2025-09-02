@@ -77,11 +77,6 @@ const Overview = () => {
 
   return (
     <div className="space-y-8">
-      {/* Welcome, Section */}
-      {/* <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Dashboard Overview</h2>
-        <p className="text-gray-600">Here's what's happening with your campaigns and donations</p>
-      </div> */}
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
