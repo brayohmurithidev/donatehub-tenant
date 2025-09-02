@@ -1,9 +1,9 @@
 import {Card, CardContent, CardDescription, CardHeader, CardTitle,} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
 import {Badge} from "@/components/ui/badge";
-import {Download, Heart, TrendingUp, Users, DollarSign, Phone, Mail, MessageSquare, Target, ArrowUpDown, ArrowUp, ArrowDown} from "lucide-react";
+import {Download, Heart, TrendingUp, Users, DollarSign, Phone, Mail, MessageSquare, Target, ArrowUpDown} from "lucide-react";
 import {useGetDonations} from "@/hooks/api/useDonation";
-import {LoadingSpinner} from "@/components/loadingSpinner";
+// import {LoadingSpinner} from "@/components/loadingSpinner";
 import type {DonationType} from "@/lib/types";
 import {
   flexRender,
@@ -23,7 +23,7 @@ import {useState} from "react";
 import jsPDF from "jspdf";
 
 // Import autoTable plugin
-import autoTable from "jspdf-autotable";
+import "jspdf-autotable";
 
 // Extend jsPDF with autoTable method
 declare module "jspdf" {

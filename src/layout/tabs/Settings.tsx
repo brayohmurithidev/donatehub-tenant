@@ -7,7 +7,7 @@ import {Textarea} from "@/components/ui/textarea";
 import {Badge} from "@/components/ui/badge";
 import {CheckCircle, CreditCard, Eye, XCircleIcon, Building2, Mail, Phone, MapPin, Globe, Save, User, Shield, Settings as SettingsIcon} from "lucide-react";
 import {useGetTenant} from "@/hooks/api/useTenant";
-import {LoadingSpinner} from "@/components/loadingSpinner";
+// import {LoadingSpinner} from "@/components/loadingSpinner";
 import {Formik} from "formik";
 import type {Tenant} from "@/lib/types";
 import MpesaIntegrationSheet from "@/components/MpesaIntegration";

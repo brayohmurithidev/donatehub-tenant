@@ -49,6 +49,17 @@ interface Campaign {
   };
 }
 
+// Payload used when updating a campaign via the form
+interface CampaignUpdatePayload {
+  title: string;
+  description: string;
+  goal_amount: string;
+  start_date: string;
+  end_date: string;
+  image_url: string;
+  status: string;
+}
+
 export function ViewCampaignSheet({
   children,
   campaignId,
@@ -57,7 +68,7 @@ export function ViewCampaignSheet({
   const [editMode, setEditMode] = useState(false);
   const queryClient = useQueryClient();
 
-  const { mutate, isPending } = useMutation<Campaign, AxiosError, Campaign>({
+  const { mutate, isPending } = useMutation<Campaign, AxiosError, CampaignUpdatePayload>({
     mutationFn: async (data) => {
       const res = await API.put(`/campaigns/${campaignId}`, data);
       return res.data;

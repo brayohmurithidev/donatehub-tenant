@@ -8,11 +8,11 @@ import {
 } from "@/components/ui/dropdown-menu.tsx";
 import {Avatar, AvatarFallback, AvatarImage,} from "@/components/ui/avatar.tsx";
 import {useAuth} from "@/context/AuthContext";
-import {useGetTenant} from "@/hooks/api/useTenant";
+// import {useGetTenant} from "@/hooks/api/useTenant";
 
 const Header = () => {
   const { logout, user } = useAuth();
-  const {data: tenant} = useGetTenant();
+  // const {data: tenant} = useGetTenant(); // currently unused
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
@@ -81,7 +81,7 @@ const Header = () => {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
                   <div className="px-3 py-2 border-b border-gray-100">
-                    <p className="text-sm font-medium text-gray-900">{user?.full_name || "User"}</p>
+                    <p className="text-sm font-medium text-gray-900">{user?.name || "User"}</p>
                     <p className="text-xs text-gray-500">{user?.email}</p>
                   </div>
                   <DropdownMenuItem className="cursor-pointer">
