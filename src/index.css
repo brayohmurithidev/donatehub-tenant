@@ -3,40 +3,260 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Custom Color Variables for Design System */
+:root {
+  /* Primary Colors */
+  --color-primary: #2563eb; /* blue-600 */
+  --color-primary-light: #1d4ed8; /* blue-700 */
+  --color-primary-dark: #1e40af; /* blue-800 */
+  --color-primary-50: #eff6ff; /* blue-50 */
+  --color-primary-100: #dbeafe; /* blue-100 */
+  --color-primary-200: #bfdbfe; /* blue-200 */
+  
+  /* Success Colors */
+  --color-success: #16a34a; /* green-600 */
+  --color-success-light: #15803d; /* green-700 */
+  --color-success-50: #f0fdf4; /* green-50 */
+  
+  /* Warning Colors */
+  --color-warning: #ea580c; /* orange-600 */
+  --color-warning-light: #c2410c; /* orange-700 */
+  --color-warning-50: #fff7ed; /* orange-50 */
+  
+  /* Danger Colors */
+  --color-danger: #dc2626; /* red-600 */
+  --color-danger-light: #b91c1c; /* red-700 */
+  --color-danger-50: #fef2f2; /* red-50 */
+  
+  /* Info Colors */
+  --color-info: #7c3aed; /* purple-600 */
+  --color-info-light: #6d28d9; /* purple-700 */
+  --color-info-50: #faf5ff; /* purple-50 */
+  
+  /* Secondary Colors */
+  --color-secondary: #6366f1; /* indigo-600 */
+  --color-secondary-light: #5b21b6; /* indigo-700 */
+  --color-secondary-50: #eef2ff; /* indigo-50 */
+  
+  /* Neutral Colors */
+  --color-neutral-50: #f9fafb;
+  --color-neutral-100: #f3f4f6;
+  --color-neutral-200: #e5e7eb;
+  --color-neutral-300: #d1d5db;
+  --color-neutral-400: #9ca3af;
+  --color-neutral-500: #6b7280;
+  --color-neutral-600: #4b5563;
+  --color-neutral-700: #374151;
+  --color-neutral-800: #1f2937;
+  --color-neutral-900: #111827;
+}
+
+/* Utility Classes for Custom Colors */
+.bg-primary { background-color: var(--color-primary); }
+.bg-primary-light { background-color: var(--color-primary-light); }
+.bg-primary-dark { background-color: var(--color-primary-dark); }
+.bg-primary-50 { background-color: var(--color-primary-50); }
+.bg-primary-100 { background-color: var(--color-primary-100); }
+.bg-primary-200 { background-color: var(--color-primary-200); }
+
+.bg-success { background-color: var(--color-success); }
+.bg-success-light { background-color: var(--color-success-light); }
+.bg-success-50 { background-color: var(--color-success-50); }
+
+.bg-warning { background-color: var(--color-warning); }
+.bg-warning-light { background-color: var(--color-warning-light); }
+.bg-warning-50 { background-color: var(--color-warning-50); }
+
+.bg-danger { background-color: var(--color-danger); }
+.bg-danger-light { background-color: var(--color-danger-light); }
+.bg-danger-50 { background-color: var(--color-danger-50); }
+
+.bg-info { background-color: var(--color-info); }
+.bg-info-light { background-color: var(--color-info-light); }
+.bg-info-50 { background-color: var(--color-info-50); }
+
+.bg-secondary { background-color: var(--color-secondary); }
+.bg-secondary-light { background-color: var(--color-secondary-light); }
+.bg-secondary-50 { background-color: var(--color-secondary-50); }
+
+.text-primary { color: var(--color-primary); }
+.text-primary-light { color: var(--color-primary-light); }
+.text-primary-dark { color: var(--color-primary-dark); }
+.text-primary-50 { color: var(--color-primary-50); }
+.text-primary-100 { color: var(--color-primary-100); }
+.text-primary-200 { color: var(--color-primary-200); }
+
+.text-success { color: var(--color-success); }
+.text-success-light { color: var(--color-success-light); }
+.text-success-50 { color: var(--color-success-50); }
+
+.text-warning { color: var(--color-warning); }
+.text-warning-light { color: var(--color-warning-light); }
+.text-warning-50 { color: var(--color-warning-50); }
+
+.text-danger { color: var(--color-danger); }
+.text-danger-light { color: var(--color-danger-light); }
+.text-danger-50 { color: var(--color-danger-50); }
+
+.text-info { color: var(--color-info); }
+.text-info-light { color: var(--color-info-light); }
+.text-info-50 { color: var(--color-info-50); }
+
+.text-secondary { color: var(--color-secondary); }
+.text-secondary-light { color: var(--color-secondary-light); }
+.text-secondary-50 { color: var(--color-secondary-50); }
+
+.border-primary { border-color: var(--color-primary); }
+.border-primary-light { border-color: var(--color-primary-light); }
+.border-primary-dark { border-color: var(--color-primary-dark); }
+.border-primary-50 { border-color: var(--color-primary-50); }
+.border-primary-100 { border-color: var(--color-primary-100); }
+.border-primary-200 { border-color: var(--color-primary-200); }
+
+.border-success { border-color: var(--color-success); }
+.border-success-light { border-color: var(--color-success-light); }
+.border-success-50 { border-color: var(--color-success-50); }
+
+.border-warning { border-color: var(--color-warning); }
+.border-warning-light { border-color: var(--color-warning-light); }
+.border-warning-50 { border-color: var(--color-warning-50); }
+
+.border-danger { border-color: var(--color-danger); }
+.border-danger-light { border-color: var(--color-danger-light); }
+.border-danger-50 { border-color: var(--color-danger-50); }
+
+.border-info { border-color: var(--color-info); }
+.border-info-light { border-color: var(--color-info-light); }
+.border-info-50 { border-color: var(--color-info-50); }
+
+.border-secondary { border-color: var(--color-secondary); }
+.border-secondary-light { border-color: var(--color-secondary-light); }
+.border-secondary-50 { border-color: var(--color-secondary-50); }
+
+/* Focus ring colors */
+.focus\:ring-primary:focus { --tw-ring-color: var(--color-primary); }
+.focus\:ring-success:focus { --tw-ring-color: var(--color-success); }
+.focus\:ring-warning:focus { --tw-ring-color: var(--color-warning); }
+.focus\:ring-danger:focus { --tw-ring-color: var(--color-danger); }
+.focus\:ring-info:focus { --tw-ring-color: var(--color-info); }
+.focus\:ring-secondary:focus { --tw-ring-color: var(--color-secondary); }
+
+/* Hover colors */
+.hover\:bg-primary-light:hover { background-color: var(--color-primary-light); }
+.hover\:bg-primary-dark:hover { background-color: var(--color-primary-dark); }
+.hover\:bg-success-light:hover { background-color: var(--color-success-light); }
+.hover\:bg-warning-light:hover { background-color: var(--color-warning-light); }
+.hover\:bg-danger-light:hover { background-color: var(--color-danger-light); }
+.hover\:bg-info-light:hover { background-color: var(--color-info-light); }
+.hover\:bg-secondary-light:hover { background-color: var(--color-secondary-light); }
+
+/* Gradient utilities */
+.bg-gradient-primary { background: linear-gradient(to right, var(--color-primary), var(--color-primary-light)); }
+.bg-gradient-primary-hover:hover { background: linear-gradient(to right, var(--color-primary-light), var(--color-primary-dark)); }
+
+/* Light mode theme using brand colors */
 :root {
   --radius: 0.625rem;
+  --background: #ffffff; /* white background */
+  --foreground: #203e52; /* brand accent (deep navy) text */
 
-  --background: #f9fafb;
-  --foreground: #111827;
-
-  --card: #ffffff;
-  --card-foreground: #111827;
-
-  --popover: #ffffff;
-  --popover-foreground: #111827;
-
-  --primary: #4f46e5;
+  --primary: #eb6a2c; /* brand primary orange */
   --primary-foreground: #ffffff;
-
-  --secondary: #14b8a6;
+  --secondary: #138289; /* brand secondary teal */
   --secondary-foreground: #ffffff;
 
-  --accent: #facc15;
-  --accent-foreground: #1f2937;
+  --accent: #203e52; /* brand accent deep navy */
+  --accent-foreground: #ffffff;
+  --highlight: #ef9325; /* brand golden highlight */
+  --highlight-foreground: #ffffff;
 
-  --destructive: #ef4444;
+  --destructive: #e74c3c; /* keep or choose a brand alternative */
 
-  --border: #e5e7eb;
-  --input: #e5e7eb;
-  --ring: #4f46e5;
+  --border: #6b7280; /* brand neutral gray for borders */
+  --input: #6b7280;
+  --ring: #eb6a2c; /* brand primary for focus rings */
 
-  --sidebar: #1e293b;
-  --sidebar-foreground: #f8fafc;
-  --sidebar-primary: #4f46e5;
+  --sidebar: #203e52; /* deep navy sidebar */
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #eb6a2c; /* brand orange for active items */
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #14b8a6;
+  --sidebar-accent: #138289; /* brand teal for accent items */
   --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #6b7280;
+  --sidebar-ring: #eb6a2c;
 }
+
+/* Dark mode theme using darker brand tones */
+.dark {
+  --background: #152835; /* very dark navy background */
+  --foreground: #f3aa54; /* warm light accent for text */
+
+  --card: #203e52; /* deep navy for cards */
+  --card-foreground: #ffffff;
+
+  --popover: #203e52;
+  --popover-foreground: #ffffff;
+
+  --primary: #c9561f; /* darker orange for dark mode */
+  --primary-foreground: #ffffff;
+  --secondary: #0f656b; /* darker teal for dark mode */
+  --secondary-foreground: #ffffff;
+
+  --accent: #203e52;
+  --accent-foreground: #ffffff;
+  --highlight: #c9771d; /* darker golden highlight */
+  --highlight-foreground: #ffffff;
+
+  --destructive: #c0392b; /* dark red for destructive */
+
+  --border: #203e52;
+  --input: #203e52;
+  --ring: #eb6a2c;
+
+  --sidebar: #152835;
+  --sidebar-foreground: #f3aa54;
+  --sidebar-primary: #c9561f;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #0f656b;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #203e52;
+  --sidebar-ring: #eb6a2c;
+}
+
+/*:root {*/
+/*  --radius: 0.625rem;*/
+
+/*  --background: #f9fafb;*/
+/*  --foreground: #111827;*/
+
+/*  --card: #ffffff;*/
+/*  --card-foreground: #111827;*/
+
+/*  --popover: #ffffff;*/
+/*  --popover-foreground: #111827;*/
+
+/*  --primary: #4f46e5;*/
+/*  --primary-foreground: #ffffff;*/
+
+/*  --secondary: #14b8a6;*/
+/*  --secondary-foreground: #ffffff;*/
+
+/*  --accent: #facc15;*/
+/*  --accent-foreground: #1f2937;*/
+
+/*  --destructive: #ef4444;*/
+
+/*  --border: #e5e7eb;*/
+/*  --input: #e5e7eb;*/
+/*  --ring: #4f46e5;*/
+
+/*  --sidebar: #1e293b;*/
+/*  --sidebar-foreground: #f8fafc;*/
+/*  --sidebar-primary: #4f46e5;*/
+/*  --sidebar-primary-foreground: #ffffff;*/
+/*  --sidebar-accent: #14b8a6;*/
+/*  --sidebar-accent-foreground: #ffffff;*/
+/*}*/
 
 /*:root {*/
 /*  font-family: 'Inter', system-ui, sans-serif;*/
@@ -103,7 +323,6 @@
   --sidebar-accent: #3498db;
   --sidebar-accent-foreground: #ffffff;
 }
-
 
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);

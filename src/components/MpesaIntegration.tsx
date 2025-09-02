@@ -26,6 +26,19 @@ const testValidationSchema = Yup.object({
     .min(1, "Amount must be greater than 0"),
 });
 
+const mpesaIntegrationValidationSchema = Yup.object({
+  shortcode: Yup.string()
+    .required("Shortcode is required")
+    .min(1, "Shortcode must be greater than 0"),
+  consumer_secret: Yup.string().required("Consumer secret is required"),
+  consumer_key: Yup.string().required("Consumer key is required"),
+  callback_url: Yup.string().required("Callback url is required"),
+  name: Yup.string().required("Name is required"),
+  account_reference: Yup.string().required("Account reference is required"),
+  environment: Yup.string().required("Environment is required"),
+  passkey: Yup.string().required("Passkey is required"),
+});
+
 interface MpesaConfig {
   id?: string;
   shortcode: string;
@@ -131,17 +144,23 @@ const MpesaIntegrationSheet = ({ children, mpesa }: MpesaIntegrationProps) => {
   return (
     <Sheet>
       <SheetTrigger asChild>{children}</SheetTrigger>
-      <SheetContent className="w-[90vw] sm:max-w-2xl overflow-auto px-8">
+      <SheetContent className="w-[90vw] sm:max-w-2xl overflow-auto px-8 py-4">
         <SheetHeader>
           <div className="flex items-center justify-between mt-8">
             <div>
               <SheetTitle>Mpesa Integration</SheetTitle>
-              <SheetDescription>Add payment method</SheetDescription>
+              <SheetDescription>Mpesa payment method</SheetDescription>
             </div>
 
-            <Button disabled={testMode} onClick={() => setEditMode(!editMode)}>
-              {editMode ? "Cancel Edit" : "Edit Payment Method"}
-            </Button>
+            {mpesa && (
+              <Button
+                disabled={testMode}
+                onClick={() => setEditMode(!editMode)}
+                className={`${editMode ? 'bg-danger hover:bg-danger-dark' : 'bg-primary hover:bg-primary-dark'} text-white`}
+              >
+                {editMode ? "Cancel Edit" : "Edit Payment Method"}
+              </Button>
+            )}
           </div>
           {mpesa?.is_verified && (
             <Alert className="items-center">
@@ -152,7 +171,7 @@ const MpesaIntegrationSheet = ({ children, mpesa }: MpesaIntegrationProps) => {
             </Alert>
           )}
         </SheetHeader>
-        {mpesa && (
+        {mpesa ? (
           <Formik
             enableReinitialize={true}
             onSubmit={(values: MpesaConfig) => mutation.mutate(values)}
@@ -317,11 +336,19 @@ const MpesaIntegrationSheet = ({ children, mpesa }: MpesaIntegrationProps) => {
                 </div>
 
                 {editMode ? (
-                  <Button onClick={() => handleSubmit()}>
-                    Update Payment Method
+                  <Button 
+                    onClick={() => handleSubmit()}
+                    className="w-full bg-primary hover:bg-primary-dark text-white py-3"
+                    disabled={mutation.isPending}
+                  >
+                    {mutation.isPending ? "Updating..." : "Update Payment Method"}
                   </Button>
                 ) : !mpesa?.is_verified ? (
-                  <Button disabled={testMode} onClick={() => setTestMode(true)}>
+                  <Button 
+                    disabled={testMode} 
+                    onClick={() => setTestMode(true)}
+                    className="w-full bg-success hover:bg-success-dark text-white py-3"
+                  >
                     Test Payment Integration
                   </Button>
                 ) : null}
@@ -343,65 +370,300 @@ const MpesaIntegrationSheet = ({ children, mpesa }: MpesaIntegrationProps) => {
                       handleBlur,
                     }) => (
                       <>
-                        <div className="grid gap-2">
-                          <Label>Phone Number</Label>
-                          <Input
-                            type="text"
-                            placeholder="Enter phone: e.g 254712345478"
-                            value={phone}
-                            name="phone"
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            disabled={testMutation.isPending}
-                            className={` ${errors.phone && touched.phone ? "border-destructive" : ""}`}
-                          />
-                          <p
-                            className={` text-sm ${errors.phone && touched.phone ? "text-red-500" : ""}`}
-                          >
-                            {errors?.phone}
-                          </p>
+                        <div className="grid md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label className="text-sm font-medium text-gray-700">Phone Number</Label>
+                            <Input
+                              type="text"
+                              placeholder="254712345678"
+                              value={phone}
+                              name="phone"
+                              onChange={handleChange}
+                              onBlur={handleBlur}
+                              disabled={testMutation.isPending}
+                              className={`border-gray-300 focus:border-primary focus:ring-primary ${
+                                errors.phone && touched.phone ? "border-destructive" : ""
+                              }`}
+                            />
+                            {errors.phone && touched.phone && (
+                              <p className="text-destructive text-xs">{errors.phone}</p>
+                            )}
+                          </div>
+                          <div className="space-y-2">
+                            <Label className="text-sm font-medium text-gray-700">Test Amount</Label>
+                            <Input
+                              type="number"
+                              placeholder="1"
+                              value={amount || ""}
+                              name="amount"
+                              onChange={handleChange}
+                              onBlur={handleBlur}
+                              className={`border-gray-300 focus:border-primary focus:ring-primary ${
+                                errors.amount && touched.amount ? "border-destructive" : ""
+                              }`}
+                              disabled={testMutation.isPending}
+                            />
+                            {errors.amount && touched.amount && (
+                              <p className="text-destructive text-xs">{errors.amount}</p>
+                            )}
+                          </div>
                         </div>
-                        <div className="grid gap-2">
-                          <Label>Amount</Label>
-                          <Input
-                            type="number"
-                            placeholder="Enter test amount"
-                            value={amount || ""}
-                            name="amount"
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            className={` ${errors.amount && touched.amount ? "border-destructive" : ""}`}
-                            disabled={testMutation.isPending}
-                          />
-                          <p
-                            className={`text-sm ${errors.amount && touched.amount ? "text-red-500" : ""}`}
+                        <div className="flex gap-3 pt-2">
+                          <Button
+                            disabled={
+                              amount < 1 || phone === "" || testMutation.isPending
+                            }
+                            variant="secondary"
+                            onClick={() => handleSubmit()}
+                            className="cursor-pointer bg-success hover:bg-success-dark text-white flex-1"
                           >
-                            {errors?.amount}
-                          </p>
+                            {testMutation.isPending
+                              ? "Sending STK Push..."
+                              : "Send STK Push"}
+                          </Button>
+                          <Button
+                            onClick={() => setTestMode(false)}
+                            variant="outline"
+                            disabled={testMutation.isPending}
+                            className="border-gray-300 hover:bg-gray-50"
+                          >
+                            Cancel Test
+                          </Button>
                         </div>
-                        <Button
-                          disabled={
-                            amount < 1 || phone === "" || testMutation.isPending
-                          }
-                          variant="secondary"
-                          onClick={() => handleSubmit()}
-                          className="cursor-pointer"
-                        >
-                          {testMutation.isPending
-                            ? "Sending STK Push"
-                            : "Send STK Push"}
-                        </Button>
-                        <Button
-                          onClick={() => setTestMode(false)}
-                          variant="outline"
-                          disabled={testMutation.isPending}
-                        >
-                          Close Test
-                        </Button>
                       </>
                     )}
                   </Formik>
                 )}
+              </>
+            )}
+          </Formik>
+        ) : (
+          //    NO MPESA INTEGRATION CREATE
+          <Formik
+            initialValues={{
+              name: "",
+              shortcode: "",
+              consumer_secret: "",
+              consumer_key: "",
+              callback_url: "",
+              account_reference: "",
+              environment: "sandbox",
+              passkey: "",
+            }}
+            validationSchema={mpesaIntegrationValidationSchema}
+            onSubmit={(values) => console.log(values)}
+          >
+            {({
+              values: {
+                name,
+                consumer_key,
+                consumer_secret,
+                passkey,
+                shortcode,
+                callback_url,
+                environment,
+                account_reference,
+              },
+              handleChange,
+              handleSubmit,
+              setFieldValue,
+              errors,
+              touched,
+              handleBlur,
+            }) => (
+              <>
+                <div className="grid gap-2">
+                  <Label>Name</Label>
+                  <Input
+                    type="text"
+                    placeholder="Enter organization name"
+                    value={name || ""}
+                    name="name"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    className={` ${errors.name && touched.name ? "border-destructive" : ""}`}
+                  />
+                  <p
+                    className={`text-sm ${errors.name && touched.name ? "text-red-500" : ""}`}
+                  >
+                    {errors?.name}
+                  </p>
+                </div>
+
+                <div className="grid gap-2">
+                  <Label>Short Code</Label>
+                  <Input
+                    type="text"
+                    placeholder="Enter test amount"
+                    value={shortcode || ""}
+                    name="shortcode"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    className={` ${errors.shortcode && touched.shortcode ? "border-destructive" : ""}`}
+                    // disabled={testMutation.isPending}
+                  />
+                  <p
+                    className={`text-sm ${errors.shortcode && touched.shortcode ? "text-red-500" : ""}`}
+                  >
+                    {errors?.shortcode}
+                  </p>
+                </div>
+                <div className="grid gap-2">
+                  <Label>Account Reference</Label>
+                  <Input
+                    type="text"
+                    placeholder="Enter test amount"
+                    value={account_reference || ""}
+                    name="account_reference"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    className={` ${errors.account_reference && touched.account_reference ? "border-destructive" : ""}`}
+                    // disabled={testMutation.isPending}
+                  />
+                  <p
+                    className={`text-sm ${errors.account_reference && touched.account_reference ? "text-red-500" : ""}`}
+                  >
+                    {errors?.account_reference}
+                  </p>
+                </div>
+                <div className="grid gap-2">
+                  <Label>Consumer Key</Label>
+                  <div className="relative">
+                    <Input
+                      type={show.consumerKey ? "text" : "password"}
+                      value={consumer_key}
+                      name="consumer_key"
+                      placeholder="********"
+                      onChange={handleChange}
+                      className={` ${errors.consumer_key && touched.consumer_key ? "border-destructive" : ""}`}
+                    />
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setShow({ ...show, consumerKey: !show.consumerKey })
+                      }
+                      className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                    >
+                      {show.consumerKey ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                    </button>
+                  </div>
+                  <p
+                    className={`text-sm ${errors.consumer_key && touched.consumer_key ? "text-red-500" : ""}`}
+                  >
+                    {errors?.consumer_key}
+                  </p>
+                </div>
+
+                <div className="grid gap-2">
+                  <Label>Consumer Secret</Label>
+                  <div className="relative">
+                    <Input
+                      type={show.consumerSecret ? "text" : "password"}
+                      value={consumer_secret}
+                      name="consumer_secret"
+                      placeholder="********"
+                      onChange={handleChange}
+                      className={` ${errors.consumer_secret && touched.consumer_secret ? "border-destructive" : ""}`}
+                    />
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setShow({
+                          ...show,
+                          consumerSecret: !show.consumerSecret,
+                        })
+                      }
+                      className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                    >
+                      {show.consumerSecret ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                    </button>
+                  </div>
+                  <p
+                    className={`text-sm ${errors.consumer_secret && touched.consumer_secret ? "text-red-500" : ""}`}
+                  >
+                    {errors?.consumer_secret}
+                  </p>
+                </div>
+
+                <div className="grid gap-2">
+                  <Label>Passkey</Label>
+                  <div className="relative">
+                    <Input
+                      type={show.passkey ? "text" : "password"}
+                      value={passkey}
+                      name="passkey"
+                      placeholder="********"
+                      onChange={handleChange}
+                      className={` ${errors.passkey && touched.passkey ? "border-destructive" : ""}`}
+                    />
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setShow({ ...show, passkey: !show.passkey })
+                      }
+                      className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                    >
+                      {show.passkey ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                    </button>
+                  </div>
+                  <p
+                    className={`text-sm ${errors.passkey && touched.passkey ? "text-red-500" : ""}`}
+                  >
+                    {errors?.passkey}
+                  </p>
+                </div>
+
+                <div className="grid gap-2">
+                  <Label>Environment</Label>
+                  <Select
+                    onValueChange={(val) => setFieldValue("environment", val)}
+                    name="environment"
+                    value={environment}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select Environment" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectItem value="sandbox">Sandbox</SelectItem>
+                        <SelectItem value="production">Production</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="grid gap-2">
+                  <Label>Callback URL</Label>
+                  <Input
+                    type="text"
+                    value={callback_url}
+                    name="callback_url"
+                    onChange={handleChange}
+                    className={` ${errors.callback_url && touched.callback_url ? "border-destructive" : ""}`}
+                  />
+                  <p
+                    className={`text-sm ${errors.callback_url && touched.callback_url ? "text-red-500" : ""}`}
+                  >
+                    {errors?.callback_url}
+                  </p>
+                </div>
+                <Button 
+                  onClick={() => handleSubmit()}
+                  className="w-full bg-primary hover:bg-primary-dark text-white py-3"
+                >
+                  Add M-PESA Integration
+                </Button>
               </>
             )}
           </Formik>

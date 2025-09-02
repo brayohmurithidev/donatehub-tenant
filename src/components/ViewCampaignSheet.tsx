@@ -17,7 +17,7 @@ import {useGetCampaign} from "@/hooks/api/useCampaigns";
 import {format} from "date-fns";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue,} from "@/components/ui/select";
 import {Calendar} from "@/components/ui/calendar";
-import {CalendarIcon} from "lucide-react";
+import {CalendarIcon, Target, Users, DollarSign, Calendar as CalendarIcon2, Building2, Edit, X} from "lucide-react";
 import {cn} from "@/lib/utils";
 import {Popover, PopoverContent, PopoverTrigger,} from "@/components/ui/popover";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
@@ -25,6 +25,8 @@ import API from "@/lib/api";
 import type {AxiosError} from "axios";
 import {toast} from "sonner";
 import type {AxiosErrorResponse} from "@/lib/types";
+import {Badge} from "@/components/ui/badge";
+import {Progress} from "@/components/ui/progress";
 
 type ViewCampaignSheetProps = {
   children: React.ReactNode;
@@ -39,6 +41,12 @@ interface Campaign {
   end_date: string;
   image_url: string;
   status: string;
+  percent_funded: number;
+  days_left: number;
+  total_donors: number;
+  tenant: {
+    name: string;
+  };
 }
 
 export function ViewCampaignSheet({
@@ -100,77 +108,248 @@ export function ViewCampaignSheet({
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
-  if (isLoading) return <div>Loading...</div>;
+  const getStatusColor = (status: string) => {
+    switch (status.toLowerCase()) {
+      case 'active':
+        return 'success';
+      case 'completed':
+        return 'primary';
+      case 'cancelled':
+        return 'danger';
+      default:
+        return 'secondary';
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center py-16">
+        <div className="flex flex-col items-center gap-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+          <p className="text-gray-600">Loading campaign details...</p>
+        </div>
+      </div>
+    );
+  }
+  
   if (!campaign) return <div>Campaign not found</div>;
 
   return (
     <Sheet>
       <SheetTrigger asChild>{children}</SheetTrigger>
-      <SheetContent className="w-[90vw] sm:max-w-3xl overflow-auto p-4">
-        <SheetHeader>
-          <div className="flex justify-between items-center mt-8">
-            <div>
-              <SheetTitle>
+      <SheetContent className="w-[95vw] sm:max-w-4xl overflow-auto p-0">
+        <div className="h-full flex flex-col">
+          {/* Header */}
+          <SheetHeader className="p-6 border-b border-gray-200 bg-white">
+            <div className="flex justify-between items-start">
+              <div className="flex-1">
+                <SheetTitle className="text-2xl font-bold text-gray-900">
                 {editMode ? "Edit Campaign" : campaign.title}
               </SheetTitle>
-              <SheetDescription>
+                <SheetDescription className="text-gray-600 mt-1">
                 {editMode
-                  ? "You can edit the campaign fields below"
-                  : "Campaign Details"}
+                    ? "Update campaign information below"
+                    : "View and manage campaign details"}
               </SheetDescription>
             </div>
+              <div className="flex items-center gap-2">
             <Button
-              // variant="secondary"
-              className="px-8 py-3"
+                  variant={editMode ? "outline" : "default"}
+                  size="sm"
               onClick={() => setEditMode((prev) => !prev)}
-            >
-              {editMode ? "Cancel Edit" : "Edit"}
+                  className={editMode ? "border-danger text-danger hover:bg-danger-50" : ""}
+                >
+                  {editMode ? (
+                    <>
+                      <X className="h-4 w-4 mr-2" />
+                      Cancel
+                    </>
+                  ) : (
+                    <>
+                      <Edit className="h-4 w-4 mr-2" />
+                      Edit
+                    </>
+                  )}
             </Button>
+                <SheetClose asChild>
+                  <Button variant="outline" size="sm">Close</Button>
+                </SheetClose>
+              </div>
           </div>
         </SheetHeader>
 
-        <div className="grid gap-6 py-4 px-2">
+          <div className="flex-1 overflow-auto">
+            <div className="grid lg:grid-cols-2 gap-0 h-full">
+              {/* Left Column - Campaign Image and Stats */}
+              <div className="p-6 bg-gray-50">
+                {/* Campaign Image */}
+                <div className="mb-6">
+                  <Label className="text-sm font-medium text-gray-700 mb-2 block">Campaign Image</Label>
+                  {campaign.image_url ? (
+                    <div className="relative rounded-lg overflow-hidden">
+                      <img
+                        src={campaign.image_url}
+                        alt={campaign.title}
+                        className="w-full h-64 object-cover rounded-lg"
+                      />
+                      <div className="absolute top-3 left-3">
+                        <Badge 
+                          className={`bg-${getStatusColor(campaign.status)} text-white border-0 shadow-lg`}
+                        >
+                          {campaign.status.charAt(0).toUpperCase() + campaign.status.slice(1)}
+                        </Badge>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="w-full h-64 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center">
+                      <div className="text-center">
+                        <Target className="h-12 w-12 text-gray-400 mx-auto mb-2" />
+                        <p className="text-sm text-gray-500">No image available</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Campaign Stats */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-3">Campaign Statistics</h3>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-white p-4 rounded-lg border border-gray-200">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-success-100 rounded-full flex items-center justify-center">
+                          <DollarSign className="h-5 w-5 text-success" />
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-600">Progress</p>
+                          <p className="text-lg font-bold text-gray-900">
+                            {campaign.percent_funded?.toFixed(1) || "0"}%
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-white p-4 rounded-lg border border-gray-200">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
+                          <Users className="h-5 w-5 text-primary" />
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-600">Donors</p>
+                          <p className="text-lg font-bold text-gray-900">
+                            {campaign.total_donors || "0"}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-white p-4 rounded-lg border border-gray-200">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-warning-100 rounded-full flex items-center justify-center">
+                          <Target className="h-5 w-5 text-warning" />
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-600">Goal</p>
+                          <p className="text-lg font-bold text-gray-900">
+                            KES {campaign.goal_amount?.toLocaleString() || "0"}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-white p-4 rounded-lg border border-gray-200">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-info-100 rounded-full flex items-center justify-center">
+                          <CalendarIcon2 className="h-5 w-5 text-info" />
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-600">Days Left</p>
+                          <p className="text-lg font-bold text-gray-900">
+                            {campaign.days_left || "0"}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Progress Bar */}
+                  <div className="bg-white p-4 rounded-lg border border-gray-200">
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm font-medium text-gray-700">Funding Progress</span>
+                        <span className="text-lg font-bold text-gray-900">
+                          {campaign.percent_funded?.toFixed(1) || "0"}%
+                        </span>
+                      </div>
+                      <Progress 
+                        value={campaign.percent_funded || 0} 
+                        className="h-3 bg-gray-200"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Tenant Info */}
+                  <div className="bg-white p-4 rounded-lg border border-gray-200">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-secondary-100 rounded-full flex items-center justify-center">
+                        <Building2 className="h-5 w-5 text-secondary" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-600">Organization</p>
+                        <p className="font-medium text-gray-900">{campaign.tenant?.name || "Unknown"}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column - Campaign Details Form */}
+              <div className="p-6">
+                <div className="space-y-6">
           {/* Title */}
-          <div className="grid gap-2">
-            <Label>Title</Label>
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-gray-700">Campaign Title</Label>
             <Input
               value={form.title}
               onChange={(e) => handleChange("title", e.target.value)}
               readOnly={!editMode}
+                      className={editMode ? "border-primary focus:border-primary focus:ring-primary" : "bg-gray-50"}
             />
           </div>
 
           {/* Goal Amount */}
-          <div className="grid gap-2">
-            <Label>Goal Amount (KES)</Label>
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-gray-700">Goal Amount (KES)</Label>
             <Input
               type="number"
               value={form.goal_amount}
               onChange={(e) => handleChange("goal_amount", e.target.value)}
               readOnly={!editMode}
+                      className={editMode ? "border-primary focus:border-primary focus:ring-primary" : "bg-gray-50"}
             />
           </div>
 
           {/* Description */}
-          <div className="grid gap-2">
-            <Label>Description</Label>
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-gray-700">Description</Label>
             <Textarea
               rows={4}
               value={form.description}
               onChange={(e) => handleChange("description", e.target.value)}
               readOnly={!editMode}
+                      className={editMode ? "border-primary focus:border-primary focus:ring-primary" : "bg-gray-50"}
             />
           </div>
 
           {/* Status */}
-          <div className="grid gap-2">
-            <Label>Status</Label>
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-gray-700">Status</Label>
             {editMode ? (
               <Select
                 value={form.status}
                 onValueChange={(val) => handleChange("status", val)}
               >
-                <SelectTrigger>
+                        <SelectTrigger className="border-primary focus:border-primary focus:ring-primary">
                   <SelectValue placeholder="Select status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -180,13 +359,18 @@ export function ViewCampaignSheet({
                 </SelectContent>
               </Select>
             ) : (
-              <Input value={form.status} readOnly />
+                      <Input 
+                        value={form.status} 
+                        readOnly 
+                        className="bg-gray-50"
+                      />
             )}
           </div>
 
-          {/* Start Date */}
-          <div className="grid gap-2">
-            <Label>Start Date</Label>
+                  {/* Dates */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium text-gray-700">Start Date</Label>
             {editMode ? (
               <DatePicker
                 value={form.start_date}
@@ -194,20 +378,15 @@ export function ViewCampaignSheet({
               />
             ) : (
               <Input
-                // value={format(new Date(form.start_date), "PPP")}
-                value={
-                  campaign?.start_date
-                    ? new Date(campaign.start_date).toISOString().split("T")[0]
-                    : ""
-                }
+                          value={campaign?.start_date ? format(new Date(campaign.start_date), "PPP") : ""}
                 readOnly
+                          className="bg-gray-50"
               />
             )}
           </div>
 
-          {/* End Date */}
-          <div className="grid gap-2">
-            <Label>End Date</Label>
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium text-gray-700">End Date</Label>
             {editMode ? (
               <DatePicker
                 value={form.end_date}
@@ -215,35 +394,19 @@ export function ViewCampaignSheet({
               />
             ) : (
               <Input
-                // value={format(new Date(form.end_date), "PPP")}
-                value={
-                  campaign?.end_date
-                    ? new Date(campaign.end_date).toISOString().split("T")[0]
-                    : ""
-                }
+                          value={campaign?.end_date ? format(new Date(campaign.end_date), "PPP") : ""}
                 readOnly
+                          className="bg-gray-50"
               />
             )}
+                    </div>
           </div>
 
-          {/* Image */}
-          <div className="grid gap-2">
-            <Label>Campaign Image</Label>
-            {editMode ? (
-              <>
-                {form.image_url && (
-                  <img
-                    src={
-                      typeof form.image_url === "string"
-                        ? form.image_url
-                        : URL.createObjectURL(form.image_url)
-                    }
-                    alt="Campaign"
-                    className="w-sm max-h-72 object-cover rounded-md"
-                  />
-                )}
+                  {/* Image Upload (Edit Mode) */}
+                  {editMode && (
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium text-gray-700">Update Campaign Image</Label>
                 <Input
-                  // value={form.image_url}
                   type="file"
                   accept="image/*"
                   onChange={(e) => {
@@ -252,44 +415,41 @@ export function ViewCampaignSheet({
                       handleChange("image_url", URL.createObjectURL(file));
                     }
                   }}
-                />
-              </>
+                        className="border-primary focus:border-primary focus:ring-primary"
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Footer */}
+          <SheetFooter className="p-6 border-t border-gray-200 bg-white">
+            {editMode ? (
+              <div className="flex gap-3 w-full">
+                <Button 
+                  disabled={isPending} 
+                  onClick={() => mutate(form)}
+                  className="flex-1 bg-primary hover:bg-primary-light"
+                >
+                  {isPending ? "Updating..." : "Save Changes"}
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setEditMode(false)}
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+              </div>
             ) : (
-              <img
-                src={form.image_url}
-                alt="Campaign"
-                className="w-sm max-h-72 object-cover rounded-md"
-              />
+              <div className="w-full text-center text-sm text-gray-500">
+                Click "Edit" to modify campaign details
+              </div>
             )}
-          </div>
-
-          {/* Read-only fields */}
-          <div className="grid gap-2 text-sm text-muted-foreground">
-            <p>
-              <strong>Funding Progress:</strong> {campaign.percent_funded}%
-            </p>
-            <p>
-              <strong>Days Left:</strong> {campaign.days_left}
-            </p>
-            <p>
-              <strong>Total Donors:</strong> {campaign.total_donors}
-            </p>
-            <p>
-              <strong>Tenant:</strong> {campaign.tenant.name}
-            </p>
-          </div>
+          </SheetFooter>
         </div>
-
-        <SheetFooter>
-          {editMode ? (
-            <Button disabled={isPending} onClick={() => mutate(form)}>
-              {`${isPending ? "Updating Campaign" : "Save Changes"}`}
-            </Button>
-          ) : null}
-          <SheetClose asChild>
-            <Button variant="outline">Close</Button>
-          </SheetClose>
-        </SheetFooter>
       </SheetContent>
     </Sheet>
   );
@@ -309,7 +469,7 @@ function DatePicker({
         <Button
           variant="outline"
           className={cn(
-            "w-full justify-start text-left font-normal",
+            "w-full justify-start text-left font-normal border-primary focus:border-primary focus:ring-primary",
             !value && "text-muted-foreground",
           )}
         >

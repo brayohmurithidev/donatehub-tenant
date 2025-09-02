@@ -6,7 +6,7 @@ import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
 import {Button} from "@/components/ui/button";
-import {ArrowLeft, Eye, EyeOff, Heart, Lock, Mail} from "lucide-react";
+import {ArrowLeft, Eye, EyeOff, Lock, Mail} from "lucide-react";
 import {useMutation} from "@tanstack/react-query";
 import API from "@/lib/api";
 import {useNavigate} from "react-router";
@@ -32,7 +32,7 @@ const Login = () => {
       return res.data;
     },
     onSuccess: (data) => {
-      login(data.access_token, data.user);
+      login(data.access_token,data.refresh_token, data.user);
       navigate("/");
     },
   });
@@ -54,14 +54,10 @@ const Login = () => {
       <div className="w-full max-w-md">
         <Card className="shadow-sm border bg-white">
           <CardHeader className="space-y-1">
+            {/* Logo */}
             <div className="text-center mb-6">
               <div className="inline-flex items-center space-x-2 mb-4">
-                <div className="bg-blue-500 p-2 rounded-lg">
-                  <Heart className="h-6 w-6 text-white" />
-                </div>
-                <span className="text-2xl font-bold text-gray-900">
-                  DonateKenya
-                </span>
+                <img src={"/logo.webp"} alt="DonateKenya Logo" width={200} />
               </div>
             </div>
             <CardTitle className="text-2xl font-bold text-center text-gray-900">

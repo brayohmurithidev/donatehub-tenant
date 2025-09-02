@@ -5,7 +5,7 @@ export const useGetCampaigns = () => {
   return useQuery({
     queryKey: ["campaigns"],
     queryFn: async () => {
-      const res = await API.get("/campaigns");
+      const res = await API.get("/campaigns/");
       return res.data;
     },
   });

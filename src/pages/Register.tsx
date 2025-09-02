@@ -2,7 +2,7 @@ import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
 import {ErrorMessage, Field, Formik} from "formik";
-import {ArrowLeft, Building, Eye, EyeOff, Globe, Heart, Lock, Mail, MapPin, Phone, Upload, User,} from "lucide-react";
+import {ArrowLeft, Building, Eye, EyeOff, Globe, Lock, Mail, MapPin, Phone, Upload, User,} from "lucide-react";
 import {useState} from "react";
 import {Label} from "@/components/ui/label";
 import * as Yup from "yup";
@@ -80,12 +80,7 @@ const Register = () => {
             {/* Logo */}
             <div className="text-center mb-6">
               <div className="inline-flex items-center space-x-2 mb-4">
-                <div className="bg-green-500 p-2 rounded-lg">
-                  <Heart className="h-6 w-6 text-white" />
-                </div>
-                <span className="text-2xl font-bold text-gray-900">
-                  DonateKenya
-                </span>
+                <img src={"/logo.webp"} alt="DonateKenya Logo" width={200} />
               </div>
             </div>
             <CardTitle className="text-2xl font-bold text-center text-gray-900">
@@ -471,7 +466,7 @@ const Register = () => {
                   <Button
                     type="button"
                     onClick={() => handleSubmit()}
-                    className="w-full bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600 text-white cursor-pointer"
+                    className="w-full  text-white cursor-pointer"
                     disabled={mutation.isPending}
                   >
                     {mutation.isPending
