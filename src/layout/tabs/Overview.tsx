@@ -1,7 +1,7 @@
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {Badge} from "@/components/ui/badge";
 import {Progress} from "@/components/ui/progress";
-import {DollarSign, Target, TrendingUp, Users, Heart} from "lucide-react";
+import {DollarSign, Heart, Target, TrendingUp, Users} from "lucide-react";
 import {useGetDashboardStats} from "@/hooks/api/useStats";
 
 const Overview = () => {
@@ -77,7 +77,7 @@ const Overview = () => {
 
   return (
     <div className="space-y-8">
-      {/* Welcome Section */}
+      {/* Welcome, Section */}
       {/* <div className="text-center mb-8">
         <h2 className="text-2xl font-bold text-gray-900 mb-2">Dashboard Overview</h2>
         <p className="text-gray-600">Here's what's happening with your campaigns and donations</p>
