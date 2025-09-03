@@ -1,6 +1,5 @@
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {Input} from "@/components/ui/input";
-import {Textarea} from "@/components/ui/textarea";
 import {ErrorMessage, Field, Formik} from "formik";
 import {ArrowLeft, Building, Eye, EyeOff, Globe, Lock, Mail, MapPin, Phone, Upload, User,} from "lucide-react";
 import {useState} from "react";
@@ -12,6 +11,7 @@ import API from "@/lib/api";
 import {toast} from "sonner";
 import type {AxiosError} from "axios";
 import type {AxiosErrorResponse} from "@/lib/types";
+import {DefaultEditor} from "react-simple-wysiwyg";
 
 interface RegisterProps {
   email: string;
@@ -80,7 +80,11 @@ const Register = () => {
             {/* Logo */}
             <div className="text-center mb-6">
               <div className="inline-flex items-center space-x-2 mb-4">
-                <img src={"/logo.webp"} alt="DonateKenya Logo" width={200} />
+                <img
+                  src={"/donate-hub.png"}
+                  alt="DonateKenya Logo"
+                  width={100}
+                />
               </div>
             </div>
             <CardTitle className="text-2xl font-bold text-center text-gray-900">
@@ -201,20 +205,14 @@ const Register = () => {
                       <Label htmlFor="description">
                         Organization Description *
                       </Label>
-                      <Textarea
-                        id="description"
-                        name="description"
+                      <DefaultEditor
                         value={values.description}
+                        name="description"
                         onChange={handleChange}
-                        onBlur={handleBlur}
+                        // onChange={(content) => setFieldValue("description", content)}
                         placeholder="Describe your organization's mission, vision, and activities..."
-                        rows={4}
-                        className={
-                          errors.description && touched.description
-                            ? "border-destructive"
-                            : ""
-                        }
                       />
+
                       <ErrorMessage
                         name="description"
                         component="div"

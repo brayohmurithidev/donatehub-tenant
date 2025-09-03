@@ -57,7 +57,7 @@ const Login = () => {
             {/* Logo */}
             <div className="text-center mb-6">
               <div className="inline-flex items-center space-x-2 mb-4">
-                <img src={"/logo.webp"} alt="DonateKenya Logo" width={200} />
+                <img src={"/donate-hub.png"} alt="DonateKenya Logo" width={100} />
               </div>
             </div>
             <CardTitle className="text-2xl font-bold text-center text-gray-900">
@@ -191,8 +191,9 @@ const Login = () => {
 
                   {/* Demo info */}
                   <div className="bg-gray-100 rounded-lg p-4 text-sm text-gray-600">
-                    <strong>Demo credentials:</strong> Use any email and
-                    password to sign in and explore the dashboard.
+                    <strong>Demo credentials</strong>
+                    <p><strong>Email: </strong> ngo@mail.com</p>
+                    <p><strong>Password: </strong> Ngo@2025</p>
                   </div>
                 </Form>
               )}
